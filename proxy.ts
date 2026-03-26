@@ -25,7 +25,10 @@ export async function proxy(req: NextRequest) {
   }
 
   const loginUrl = new URL('/login', req.url)
-  loginUrl.searchParams.set('from', pathname)
+  // Only allow internal paths to prevent open redirect attacks
+  if (pathname.startsWith('/') && !pathname.startsWith('//')) {
+    loginUrl.searchParams.set('from', pathname)
+  }
   return NextResponse.redirect(loginUrl)
 }
 

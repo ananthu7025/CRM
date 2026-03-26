@@ -3,29 +3,38 @@ import { db } from '@/lib/db'
 import { otps, users } from '@/drizzle/schema'
 import { eq, and } from 'drizzle-orm'
 import { Resend } from 'resend'
+import { rateLimit, getIp } from '@/lib/rate-limit'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// Cryptographically secure 6-digit OTP
 function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  return crypto.getRandomValues(new Uint32Array(1))[0] % 900000 + 100000 + ''
 }
 
 export async function POST(req: Request) {
-  try {
-    const { email } = await req.json()
+  // Rate limit: 3 OTP requests per IP per 15 minutes
+  const ip = getIp(req)
+  if (!rateLimit(`request-otp:${ip}`, 3, 15 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before requesting another code.' },
+      { status: 429 }
+    )
+  }
 
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+  try {
+    const body = await req.json()
+    const email = typeof body?.email === 'string' ? body.email.toLowerCase().trim() : null
+
+    if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 })
     }
 
     // Check user exists in DB
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email.toLowerCase().trim()))
+    const [user] = await db.select().from(users).where(eq(users.email, email))
 
     if (!user) {
-      // Don't reveal whether email is registered — silently succeed
+      // Don't reveal whether the email is registered
       return NextResponse.json({ success: true })
     }
 
@@ -33,20 +42,15 @@ export async function POST(req: Request) {
     await db
       .update(otps)
       .set({ used: true })
-      .where(and(eq(otps.email, email.toLowerCase()), eq(otps.used, false)))
+      .where(and(eq(otps.email, email), eq(otps.used, false)))
 
     const code = generateOtp()
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 min
 
-    await db.insert(otps).values({
-      email: email.toLowerCase(),
-      code,
-      expiresAt,
-    })
+    await db.insert(otps).values({ email, code, expiresAt })
 
-    // Send email via Resend
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_your_resend_api_key') {
-      const { data, error } = await resend.emails.send({
+      const { error } = await resend.emails.send({
         from: 'LuminousTracker <onboarding@resend.dev>',
         to: email,
         subject: 'Your LuminousTracker OTP',
@@ -61,15 +65,9 @@ export async function POST(req: Request) {
           </div>
         `,
       })
-      if (error) {
-        console.error('Resend error:', error)
-      } else {
-        console.log('Email sent, id:', data?.id)
-      }
-    } else {
-      // Development fallback — log to console
-      console.log(`\n🔐 OTP for ${email}: ${code}\n`)
+      if (error) console.error('Resend error:', error)
     }
+    // No console.log of OTP code — ever
 
     return NextResponse.json({ success: true })
   } catch (err) {
