@@ -51,6 +51,18 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
+export const files = pgTable('files', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  projectId: uuid('project_id')
+    .notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  url: text('url').notNull(),
+  size: integer('size').notNull(),
+  mimeType: text('mime_type').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export const otps = pgTable('otps', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').notNull(),
@@ -70,3 +82,4 @@ export type NewMeeting = typeof meetings.$inferInsert
 export type Credential = typeof credentials.$inferSelect
 export type NewCredential = typeof credentials.$inferInsert
 export type User = typeof users.$inferSelect
+export type ProjectFile = typeof files.$inferSelect

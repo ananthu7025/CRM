@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import NoteCard from '@/components/NoteCard'
 import CredentialCard from '@/components/CredentialCard'
+import FileCard from '@/components/FileCard'
 import Modal from '@/components/Modal'
 import StatsCard from '@/components/StatsCard'
-import { ArrowLeft, FileText, CalendarDays, Clock, Plus, Send, KeyRound } from 'lucide-react'
+import { ArrowLeft, FileText, CalendarDays, Clock, Plus, Send, KeyRound, Paperclip, UploadCloud } from 'lucide-react'
 import Link from 'next/link'
-import type { Project, Meeting } from '@/drizzle/schema'
+import type { Project, Meeting, ProjectFile } from '@/drizzle/schema'
 import type { NoteData } from '@/components/NoteCard'
 import type { CredentialData } from '@/components/CredentialCard'
 
@@ -99,16 +100,21 @@ export default function ProjectDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [addingCred, setAddingCred] = useState(false)
   const [editCred, setEditCred] = useState<CredentialData | null>(null)
+  const [projectFiles, setProjectFiles] = useState<ProjectFile[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [dragOver, setDragOver] = useState(false)
 
   const load = useCallback(async () => {
-    const [projRes, credRes] = await Promise.all([
+    const [projRes, credRes, filesRes] = await Promise.all([
       fetch(`/api/projects/${id}`),
       fetch(`/api/credentials?projectId=${id}`),
+      fetch(`/api/files?projectId=${id}`),
     ])
     if (!projRes.ok) { router.push('/projects'); return }
-    const [projData, credData] = await Promise.all([projRes.json(), credRes.json()])
+    const [projData, credData, filesData] = await Promise.all([projRes.json(), credRes.json(), filesRes.json()])
     setProject(projData)
     setCreds(credData)
+    setProjectFiles(filesData)
     setLoading(false)
   }, [id, router])
 
@@ -174,6 +180,28 @@ export default function ProjectDetailPage() {
     if (!confirm('Delete this credential?')) return
     await fetch(`/api/credentials/${credId}`, { method: 'DELETE' })
     setCreds(c => c.filter(x => x.id !== credId))
+  }
+
+  const uploadFiles = async (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return
+    setUploading(true)
+    for (const file of Array.from(fileList)) {
+      const form = new FormData()
+      form.append('file', file)
+      form.append('projectId', id)
+      const res = await fetch('/api/files', { method: 'POST', body: form })
+      if (res.ok) {
+        const row = await res.json()
+        setProjectFiles(f => [row, ...f])
+      }
+    }
+    setUploading(false)
+  }
+
+  const deleteFile = async (fileId: string) => {
+    if (!confirm('Delete this file?')) return
+    await fetch(`/api/files/${fileId}`, { method: 'DELETE' })
+    setProjectFiles(f => f.filter(x => x.id !== fileId))
   }
 
   if (loading) return (
@@ -246,6 +274,53 @@ export default function ProjectDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {creds.map(c => (
               <CredentialCard key={c.id} credential={c} onEdit={setEditCred} onDelete={deleteCred} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Files Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Paperclip size={16} className="text-[#F59E0B]" />
+            <h2 className="font-semibold text-[#0F172A]">Files & Attachments</h2>
+            {projectFiles.length > 0 && (
+              <span className="text-xs bg-[#F59E0B]/10 text-[#F59E0B] font-medium px-2 py-0.5 rounded-full">{projectFiles.length}</span>
+            )}
+          </div>
+          <label className="flex items-center gap-1.5 text-xs font-medium text-[#F59E0B] hover:bg-[#F59E0B]/10 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+            <Plus size={13} /> Upload
+            <input type="file" multiple className="hidden" onChange={e => uploadFiles(e.target.files)} />
+          </label>
+        </div>
+
+        {/* Drag & drop zone */}
+        <div
+          onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); uploadFiles(e.dataTransfer.files) }}
+          className={`transition-all rounded-2xl border-2 border-dashed mb-4 ${dragOver ? 'border-[#F59E0B] bg-[#F59E0B]/5' : 'border-transparent'}`}
+        >
+          {uploading && (
+            <div className="flex items-center justify-center gap-2 py-4 text-sm text-[#F59E0B]">
+              <UploadCloud size={16} className="animate-bounce" /> Uploading…
+            </div>
+          )}
+          {!uploading && projectFiles.length === 0 && (
+            <label className="flex flex-col items-center justify-center py-10 bg-white border border-dashed border-[#E2E8F0] rounded-2xl cursor-pointer hover:border-[#F59E0B]/50 hover:bg-[#F59E0B]/5 transition-all">
+              <UploadCloud size={22} className="text-[#94A3B8] mb-2" />
+              <p className="text-sm text-[#94A3B8]">Drop files here or <span className="text-[#F59E0B] font-medium">browse</span></p>
+              <p className="text-xs text-[#94A3B8] mt-0.5">Any file type · Max 50 MB each</p>
+              <input type="file" multiple className="hidden" onChange={e => uploadFiles(e.target.files)} />
+            </label>
+          )}
+        </div>
+
+        {projectFiles.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+            {projectFiles.map(f => (
+              <FileCard key={f.id} file={f} onDelete={deleteFile} />
             ))}
           </div>
         )}
