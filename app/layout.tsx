@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Sidebar from '@/components/Sidebar'
-import Topbar from '@/components/Topbar'
+import AppShell from '@/components/AppShell'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,11 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[#F7F8FB]`}>
-        <Sidebar />
-        <Topbar />
-        <main className="ml-60 pt-14 min-h-screen">
-          <div className="p-6">{children}</div>
-        </main>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   )
