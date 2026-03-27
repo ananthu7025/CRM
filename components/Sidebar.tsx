@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch } from 'lucide-react'
 
@@ -18,7 +19,7 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-60 bg-white border-r border-[#E2E8F0] flex flex-col z-40">
       <div className="px-6 py-5 border-b border-[#E2E8F0]">
-        <span className="text-[#FF5E8D] font-bold text-xl tracking-tight">LuminousTracker</span>
+        <Image src="/logo.svg" alt="LuminousTracker" width={140} height={36} priority />
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map(({ label, href, icon: Icon }) => {
