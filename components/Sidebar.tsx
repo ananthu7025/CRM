@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, X } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, Send, FileText, X } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
   { label: 'Projects', href: '/projects', icon: FolderKanban },
   { label: 'Leads', href: '/leads', icon: Users },
+  { label: 'Campaigns', href: '/campaigns', icon: Send },
+  { label: 'Templates', href: '/templates', icon: FileText },
   { label: 'Meetings', href: '/meetings', icon: CalendarDays },
   { label: 'Reminders', href: '/reminders', icon: Bell },
   { label: 'Timeline', href: '/timeline', icon: GitBranch },

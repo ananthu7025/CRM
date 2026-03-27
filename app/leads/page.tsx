@@ -104,6 +104,8 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<StatusFilter>('all')
+  const [industryFilter, setIndustryFilter] = useState('')
+  const [locationFilter, setLocationFilter] = useState('')
   const [addingLead, setAddingLead] = useState(false)
   const [editLead, setEditLead] = useState<Lead | null>(null)
   const [scraping, setScraping] = useState(false)
@@ -120,7 +122,16 @@ export default function LeadsPage() {
 
   useEffect(() => { load() }, [load])
 
-  const filtered = tab === 'all' ? leads : leads.filter(l => l.status === tab)
+  // Unique industry and location values for dropdowns
+  const industries = Array.from(new Set(leads.map(l => l.industry).filter(Boolean))) as string[]
+  const locations = Array.from(new Set(leads.map(l => l.location).filter(Boolean))) as string[]
+
+  const filtered = leads.filter(l => {
+    if (tab !== 'all' && l.status !== tab) return false
+    if (industryFilter && l.industry !== industryFilter) return false
+    if (locationFilter && l.location !== locationFilter) return false
+    return true
+  })
 
   const showMsg = (msg: string) => {
     setStatusMsg(msg)
@@ -187,8 +198,14 @@ export default function LeadsPage() {
     if (fileRef.current) fileRef.current.value = ''
   }
 
-  const tabCount = (key: StatusFilter) =>
-    key === 'all' ? leads.length : leads.filter(l => l.status === key).length
+  const tabCount = (key: StatusFilter) => {
+    const base = leads.filter(l => {
+      if (industryFilter && l.industry !== industryFilter) return false
+      if (locationFilter && l.location !== locationFilter) return false
+      return true
+    })
+    return key === 'all' ? base.length : base.filter(l => l.status === key).length
+  }
 
   return (
     <div className="space-y-6">
@@ -241,6 +258,40 @@ export default function LeadsPage() {
           </button>
         ))}
       </div>
+
+      {/* Filters */}
+      {(industries.length > 0 || locations.length > 0) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {industries.length > 0 && (
+            <select
+              value={industryFilter}
+              onChange={e => setIndustryFilter(e.target.value)}
+              className="border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FF5E8D]/30 focus:border-[#FF5E8D] bg-white"
+            >
+              <option value="">All Industries</option>
+              {industries.map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          )}
+          {locations.length > 0 && (
+            <select
+              value={locationFilter}
+              onChange={e => setLocationFilter(e.target.value)}
+              className="border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FF5E8D]/30 focus:border-[#FF5E8D] bg-white"
+            >
+              <option value="">All Locations</option>
+              {locations.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+          )}
+          {(industryFilter || locationFilter) && (
+            <button
+              onClick={() => { setIndustryFilter(''); setLocationFilter('') }}
+              className="text-xs text-[#94A3B8] hover:text-[#475569] px-2 py-1 rounded-lg hover:bg-[#F7F8FB] transition-colors"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Grid */}
       {loading ? (

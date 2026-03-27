@@ -76,6 +76,13 @@ export default function LeadCard({ lead, onEdit, onDelete, onStatusChange }: Lea
             <span className="truncate">{lead.location}</span>
           </div>
         )}
+        {lead.industry && (
+          <div className="mt-2">
+            <span className="inline-block text-[10px] font-medium bg-[#6366F1]/10 text-[#6366F1] px-2 py-0.5 rounded-full">
+              {lead.industry}
+            </span>
+          </div>
+        )}
         {lead.notes && (
           <p className="text-[#94A3B8] italic mt-2 line-clamp-2">{lead.notes}</p>
         )}

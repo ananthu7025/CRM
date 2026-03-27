@@ -18,6 +18,7 @@ export default function LeadForm({ initial, onSubmit, submitLabel = 'Save Lead' 
     phone: initial?.phone ?? '',
     website: initial?.website ?? '',
     location: initial?.location ?? '',
+    industry: initial?.industry ?? '',
     notes: initial?.notes ?? '',
     status: initial?.status ?? 'not_contacted',
   })
@@ -33,6 +34,7 @@ export default function LeadForm({ initial, onSubmit, submitLabel = 'Save Lead' 
       phone: form.phone || null,
       website: form.website || null,
       location: form.location || null,
+      industry: form.industry || null,
       notes: form.notes || null,
     } as Partial<Lead>)
     setLoading(false)
@@ -65,6 +67,12 @@ export default function LeadForm({ initial, onSubmit, submitLabel = 'Save Lead' 
           <label className="block text-xs font-medium text-[#475569] mb-1.5">Location</label>
           <input className={fieldClass} placeholder="City, Country" value={form.location ?? ''} onChange={e => set('location', e.target.value)} />
         </div>
+        <div>
+          <label className="block text-xs font-medium text-[#475569] mb-1.5">Industry</label>
+          <input className={fieldClass} placeholder="e.g. IT company, Law firm" value={form.industry ?? ''} onChange={e => set('industry', e.target.value)} />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-[#475569] mb-1.5">Status</label>
           <select className={fieldClass} value={form.status} onChange={e => set('status', e.target.value)}>

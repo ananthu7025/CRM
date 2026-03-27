@@ -80,6 +80,7 @@ export const leads = pgTable('leads', {
   phone: text('phone'),
   website: text('website'),
   location: text('location'),
+  industry: text('industry'),
   notes: text('notes'),
   status: text('status').notNull().default('not_contacted'),
   source: text('source').default('manual'),
@@ -87,8 +88,42 @@ export const leads = pgTable('leads', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
+export const emailTemplates = pgTable('email_templates', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  subject: text('subject').notNull(),
+  body: text('body').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const campaigns = pgTable('campaigns', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  templateId: uuid('template_id').references(() => emailTemplates.id, { onDelete: 'set null' }),
+  subject: text('subject').notNull(),
+  body: text('body').notNull(),
+  status: text('status').notNull().default('draft'),
+  totalLeads: integer('total_leads').notNull().default(0),
+  sentCount: integer('sent_count').notNull().default(0),
+  failedCount: integer('failed_count').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  sentAt: timestamp('sent_at'),
+})
+
+export const campaignSends = pgTable('campaign_sends', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  campaignId: uuid('campaign_id').notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  leadId: uuid('lead_id').notNull().references(() => leads.id, { onDelete: 'cascade' }),
+  status: text('status').notNull().default('pending'),
+  messageId: text('message_id'),
+  sentAt: timestamp('sent_at'),
+})
+
 export type Lead = typeof leads.$inferSelect
 export type NewLead = typeof leads.$inferInsert
+export type EmailTemplate = typeof emailTemplates.$inferSelect
+export type Campaign = typeof campaigns.$inferSelect
+export type CampaignSend = typeof campaignSends.$inferSelect
 
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert

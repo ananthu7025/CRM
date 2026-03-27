@@ -83,6 +83,7 @@ export async function POST(req: Request) {
       website: (item.website as string)?.trim() || null,
       location: (item.address as string)?.trim() || (item.city as string)?.trim() || null,
       notes: null,
+      industry: keyword.trim(),
       status: 'not_contacted',
       source: 'google_maps',
     })
