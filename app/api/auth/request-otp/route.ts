@@ -51,7 +51,7 @@ export async function POST(req: Request) {
 
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_your_resend_api_key') {
       const { error } = await resend.emails.send({
-        from: 'LuminousTracker <luminouslogics@gmail.com>',
+        from: 'LuminousTracker <noreply@luminoustracker.luminouslogics.com>',
         to: email,
         subject: 'Your LuminousTracker OTP',
         html: `
