@@ -73,6 +73,23 @@ export const otps = pgTable('otps', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
+export const leads = pgTable('leads', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  website: text('website'),
+  location: text('location'),
+  notes: text('notes'),
+  status: text('status').notNull().default('not_contacted'),
+  source: text('source').default('manual'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export type Lead = typeof leads.$inferSelect
+export type NewLead = typeof leads.$inferInsert
+
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert
 export type Note = typeof notes.$inferSelect

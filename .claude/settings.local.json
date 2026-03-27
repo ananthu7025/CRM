@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ncamadeeasy.com)",
+      "Bash(npx drizzle-kit push)",
+      "Bash(npx dotenv -e .env.local -- npx drizzle-kit push)"
+    ]
+  }
+}

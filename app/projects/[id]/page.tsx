@@ -207,7 +207,7 @@ export default function ProjectDetailPage() {
   if (loading) return (
     <div className="space-y-6">
       <div className="h-8 w-48 bg-white rounded-xl animate-pulse" />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
         {[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-white rounded-2xl animate-pulse" />)}
       </div>
     </div>
@@ -241,7 +241,7 @@ export default function ProjectDetailPage() {
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
         <StatsCard label="Notes" value={project.notes.length} icon={<FileText size={18} />} color="#6366F1" />
         <StatsCard label="Meetings" value={project.meetings.length} icon={<CalendarDays size={18} />} color="#10B981" />
         <StatsCard label="Total Hours" value="—" icon={<Clock size={18} />} color="#F59E0B" />
