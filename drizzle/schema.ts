@@ -84,6 +84,8 @@ export const leads = pgTable('leads', {
   notes: text('notes'),
   status: text('status').notNull().default('not_contacted'),
   source: text('source').default('manual'),
+  bookmarked: boolean('bookmarked').default(false).notNull(),
+  favorited: boolean('favorited').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })

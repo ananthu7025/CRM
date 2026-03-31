@@ -1,6 +1,6 @@
 'use client'
 
-import { Pencil, Trash2, Globe, Phone, MapPin, Mail, RefreshCw } from 'lucide-react'
+import { Pencil, Trash2, Globe, Phone, MapPin, Mail, RefreshCw, Bookmark, Star } from 'lucide-react'
 import type { Lead } from '@/drizzle/schema'
 
 const STATUS_CONFIG = {
@@ -20,17 +20,37 @@ interface LeadCardProps {
   onEdit: (lead: Lead) => void
   onDelete: (id: string) => void
   onStatusChange: (id: string, status: string) => void
+  onToggleBookmark?: (id: string, currentValue: boolean) => void
+  onToggleFavorite?: (id: string, currentValue: boolean) => void
 }
 
-export default function LeadCard({ lead, onEdit, onDelete, onStatusChange }: LeadCardProps) {
+export default function LeadCard({ lead, onEdit, onDelete, onStatusChange, onToggleBookmark, onToggleFavorite }: LeadCardProps) {
   const cfg = STATUS_CONFIG[lead.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.not_contacted
 
   return (
     <div className="group relative bg-white border border-[#E2E8F0] rounded-2xl p-5 hover:shadow-md hover:border-[#CBD5E1] transition-all">
       {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-3">
-        <div className="min-w-0">
-          <p className="font-semibold text-[#0F172A] truncate">{lead.name}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-[#0F172A] truncate">{lead.name}</p>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(lead.id, !!lead.favorited) }}
+                className={`transition-colors ${lead.favorited ? 'text-yellow-400' : 'text-[#CBD5E1] hover:text-yellow-400'}`}
+                title={lead.favorited ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Star size={14} fill={lead.favorited ? "currentColor" : "none"} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleBookmark?.(lead.id, !!lead.bookmarked) }}
+                className={`transition-colors ${lead.bookmarked ? 'text-[#6366F1]' : 'text-[#CBD5E1] hover:text-[#6366F1]'}`}
+                title={lead.bookmarked ? "Remove bookmark" : "Add bookmark"}
+              >
+                <Bookmark size={14} fill={lead.bookmarked ? "currentColor" : "none"} />
+              </button>
+            </div>
+          </div>
           <a
             href={`mailto:${lead.email}`}
             className="flex items-center gap-1.5 text-xs text-[#6366F1] hover:underline mt-0.5 truncate"

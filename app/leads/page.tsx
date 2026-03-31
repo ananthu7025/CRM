@@ -7,13 +7,15 @@ import Modal from '@/components/Modal'
 import type { Lead } from '@/drizzle/schema'
 import { Users, Upload, Plus, MapPin, Loader2 } from 'lucide-react'
 
-type StatusFilter = 'all' | 'not_contacted' | 'contacted' | 'responded'
+type StatusFilter = 'all' | 'not_contacted' | 'contacted' | 'responded' | 'bookmarked' | 'favorited'
 
 const TABS: { key: StatusFilter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'not_contacted', label: 'Not Contacted' },
   { key: 'contacted', label: 'Contacted' },
   { key: 'responded', label: 'Responded' },
+  { key: 'bookmarked', label: 'Bookmarked' },
+  { key: 'favorited', label: 'Favorites' },
 ]
 
 const fieldClass = 'w-full border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#FF5E8D]/30 focus:border-[#FF5E8D] transition-all'
@@ -127,7 +129,14 @@ export default function LeadsPage() {
   const locations = Array.from(new Set(leads.map(l => l.location).filter(Boolean))) as string[]
 
   const filtered = leads.filter(l => {
-    if (tab !== 'all' && l.status !== tab) return false
+    if (tab === 'bookmarked') {
+      if (!l.bookmarked) return false
+    } else if (tab === 'favorited') {
+      if (!l.favorited) return false
+    } else if (tab !== 'all' && l.status !== tab) {
+      return false
+    }
+    
     if (industryFilter && l.industry !== industryFilter) return false
     if (locationFilter && l.location !== locationFilter) return false
     return true
@@ -177,6 +186,26 @@ export default function LeadsPage() {
     setLeads(l => l.map(x => x.id === id ? updated : x))
   }
 
+  const handleToggleBookmark = async (id: string, currentValue: boolean) => {
+    const res = await fetch(`/api/leads/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookmarked: !currentValue }),
+    })
+    const updated = await res.json()
+    setLeads(l => l.map(x => x.id === id ? updated : x))
+  }
+
+  const handleToggleFavorite = async (id: string, currentValue: boolean) => {
+    const res = await fetch(`/api/leads/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ favorited: !currentValue }),
+    })
+    const updated = await res.json()
+    setLeads(l => l.map(x => x.id === id ? updated : x))
+  }
+
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -204,7 +233,10 @@ export default function LeadsPage() {
       if (locationFilter && l.location !== locationFilter) return false
       return true
     })
-    return key === 'all' ? base.length : base.filter(l => l.status === key).length
+    if (key === 'all') return base.length
+    if (key === 'bookmarked') return base.filter(l => l.bookmarked).length
+    if (key === 'favorited') return base.filter(l => l.favorited).length
+    return base.filter(l => l.status === key).length
   }
 
   return (
@@ -321,6 +353,8 @@ export default function LeadsPage() {
               onEdit={setEditLead}
               onDelete={handleDelete}
               onStatusChange={handleStatusChange}
+              onToggleBookmark={handleToggleBookmark}
+              onToggleFavorite={handleToggleFavorite}
             />
           ))}
         </div>
