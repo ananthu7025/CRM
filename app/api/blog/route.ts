@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { title, slug, publishDate, thumbnail, tag, author, authorImage, readTime, description, content, published } = body
+  const { title, slug, publishDate, thumbnail, tag, author, readTime, description, content, published } = body
 
   if (!title || !slug) {
     return NextResponse.json({ error: 'Title and slug are required' }, { status: 400 })
@@ -49,7 +49,6 @@ export async function POST(req: Request) {
         thumbnail: thumbnail?.trim() || null,
         tag: tag?.trim() || null,
         author: author?.trim() || null,
-        authorImage: authorImage?.trim() || null,
         readTime: readTime ? parseInt(readTime) : null,
         description: description?.trim() || null,
         content: content?.trim() || null,
