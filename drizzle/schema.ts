@@ -162,6 +162,17 @@ export const caseStudies = pgTable('case_studies', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
+export const contactFormSubmissions = pgTable('contact_form_submissions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  phone: text('phone').notNull(),
+  email: text('email').notNull(),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('new'), // new, read, responded
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 export type Lead = typeof leads.$inferSelect
 export type NewLead = typeof leads.$inferInsert
 export type EmailTemplate = typeof emailTemplates.$inferSelect
@@ -185,3 +196,5 @@ export type Testimonial = typeof testimonials.$inferSelect
 export type NewTestimonial = typeof testimonials.$inferInsert
 export type CaseStudy = typeof caseStudies.$inferSelect
 export type NewCaseStudy = typeof caseStudies.$inferInsert
+export type ContactFormSubmission = typeof contactFormSubmissions.$inferSelect
+export type NewContactFormSubmission = typeof contactFormSubmissions.$inferInsert

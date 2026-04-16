@@ -22,7 +22,10 @@
       "Bash(npx tsx scripts/add-case-study.ts)",
       "Bash(npx tsx scripts/test-case-study.ts)",
       "Bash(npx tsx scripts/add-case-study-unique.ts)",
-      "Bash(npm install next-cloudinary cloudinary)"
+      "Bash(npm install next-cloudinary cloudinary)",
+      "Bash(npx drizzle-kit generate)",
+      "Bash(npx drizzle-kit migrate)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_LNmfbKx9GJ6E@ep-floral-dawn-amsmm7d1-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx drizzle-kit migrate)"
     ]
   }
 }
