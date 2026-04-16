@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CaseStudy } from '@/drizzle/schema'
+import ImageUpload from './ImageUpload'
 
 interface CaseStudyFormProps {
   initial?: Partial<CaseStudy>
@@ -95,16 +96,12 @@ export default function CaseStudyForm({ initial, onSubmit, submitLabel = 'Create
         </div>
       </div>
 
-      <div>
-        <label className={labelClass}>Thumbnail URL</label>
-        <input
-          type="text"
-          value={form.thumbnail}
-          onChange={(e) => setForm({ ...form, thumbnail: e.target.value })}
-          placeholder="/images/case-study/..."
-          className={fieldClass}
-        />
-      </div>
+      <ImageUpload
+        value={form.thumbnail}
+        onChange={(url) => setForm({ ...form, thumbnail: url })}
+        folder="case-studies"
+        label="Project Thumbnail"
+      />
 
       <div>
         <label className={labelClass}>Description</label>

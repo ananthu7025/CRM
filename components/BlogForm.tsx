@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Blog } from '@/drizzle/schema'
+import ImageUpload from './ImageUpload'
 
 interface BlogFormProps {
   initial?: Partial<Blog>
@@ -123,28 +124,19 @@ export default function BlogForm({ initial, onSubmit, submitLabel = 'Create Blog
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className={labelClass}>Thumbnail URL</label>
-          <input
-            type="text"
-            value={form.thumbnail}
-            onChange={(e) => setForm({ ...form, thumbnail: e.target.value })}
-            placeholder="/images/blog/..."
-            className={fieldClass}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>Author Image URL</label>
-          <input
-            type="text"
-            value={form.authorImage}
-            onChange={(e) => setForm({ ...form, authorImage: e.target.value })}
-            placeholder="/images/avatar/..."
-            className={fieldClass}
-          />
-        </div>
-      </div>
+      <ImageUpload
+        value={form.thumbnail}
+        onChange={(url) => setForm({ ...form, thumbnail: url })}
+        folder="blog"
+        label="Blog Thumbnail"
+      />
+
+      <ImageUpload
+        value={form.authorImage}
+        onChange={(url) => setForm({ ...form, authorImage: url })}
+        folder="authors"
+        label="Author Profile Image"
+      />
 
       <div>
         <label className={labelClass}>Description</label>
