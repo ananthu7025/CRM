@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     })
 
     const response = await groq.chat.completions.create({
-      model: 'mixtral-8x7b-32768',
+      model: 'mixtral-8x7b',
       messages: [
         {
           role: 'system',
