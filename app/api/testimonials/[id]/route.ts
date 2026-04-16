@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { testimonials } from '@/drizzle/schema'
 import { eq } from 'drizzle-orm'
-import { getSession } from '@/lib/auth'
+import { getSession, checkApiKey } from '@/lib/auth'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const isAuth = await getSession()
-  if (!isAuth) {
+  const hasApiKey = checkApiKey(req)
+  if (!isAuth && !hasApiKey) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -27,9 +28,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   return NextResponse.json(row)
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const isAuth = await getSession()
-  if (!isAuth) {
+  const hasApiKey = checkApiKey(req)
+  if (!isAuth && !hasApiKey) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
