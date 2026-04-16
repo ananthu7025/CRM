@@ -129,7 +129,6 @@ export const blogs = pgTable('blogs', {
   thumbnail: text('thumbnail'),
   tag: text('tag'),
   author: text('author'),
-  authorImage: text('author_image'),
   readTime: integer('read_time'),
   description: text('description'),
   content: text('content'),

@@ -18,7 +18,6 @@ export default function BlogForm({ initial, onSubmit, submitLabel = 'Create Blog
     thumbnail: initial?.thumbnail || '',
     tag: initial?.tag || '',
     author: initial?.author || '',
-    authorImage: initial?.authorImage || '',
     readTime: initial?.readTime?.toString() || '',
     description: initial?.description || '',
     content: initial?.content || '',
@@ -42,7 +41,6 @@ export default function BlogForm({ initial, onSubmit, submitLabel = 'Create Blog
         thumbnail: form.thumbnail,
         tag: form.tag,
         author: form.author,
-        authorImage: form.authorImage,
         readTime: form.readTime ? parseInt(form.readTime) : null,
         description: form.description,
         content: form.content,
@@ -129,13 +127,6 @@ export default function BlogForm({ initial, onSubmit, submitLabel = 'Create Blog
         onChange={(url) => setForm({ ...form, thumbnail: url })}
         folder="blog"
         label="Blog Thumbnail"
-      />
-
-      <ImageUpload
-        value={form.authorImage}
-        onChange={(url) => setForm({ ...form, authorImage: url })}
-        folder="authors"
-        label="Author Profile Image"
       />
 
       <div>
