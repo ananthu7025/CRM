@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     })
 
     const response = await groq.chat.completions.create({
-      model: 'llama3-70b-8191',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'system',
@@ -37,8 +37,10 @@ export async function POST(req: Request) {
         },
         ...messages,
       ],
-      max_tokens: 256,
+      max_tokens: 600,
       temperature: 0.7,
+      top_p: 0.9,
+      frequency_penalty: 0.3,
     })
 
     const assistantMessage = response.choices[0]?.message?.content || 'I apologize, but I could not generate a response.'
