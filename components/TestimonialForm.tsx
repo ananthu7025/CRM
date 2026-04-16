@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Testimonial } from '@/drizzle/schema'
+import ImageUpload from './ImageUpload'
 
 interface TestimonialFormProps {
   initial?: Partial<Testimonial>
@@ -67,16 +68,12 @@ export default function TestimonialForm({ initial, onSubmit, submitLabel = 'Crea
         />
       </div>
 
-      <div>
-        <label className={labelClass}>Avatar / Logo URL</label>
-        <input
-          type="text"
-          value={form.avatar}
-          onChange={(e) => setForm({ ...form, avatar: e.target.value })}
-          placeholder="/images/client-logo.svg"
-          className={fieldClass}
-        />
-      </div>
+      <ImageUpload
+        value={form.avatar}
+        onChange={(url) => setForm({ ...form, avatar: url })}
+        folder="testimonials"
+        label="Avatar / Logo"
+      />
 
       <div>
         <label className={labelClass}>Testimonial *</label>
