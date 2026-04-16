@@ -11,6 +11,7 @@ const PUBLIC = [
   '/api/case-studies',
   '/api/chatbot-config',
   '/api/chatbot',
+  '/api/contact-form'
 ]
 
 export async function proxy(req: NextRequest) {
