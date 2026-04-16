@@ -37,3 +37,12 @@ export async function clearSession() {
   const jar = await cookies()
   jar.delete(COOKIE)
 }
+
+// Check for API key authentication (for seeding scripts, etc.)
+export function checkApiKey(req: Request): boolean {
+  const apiKey = req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '')
+  const expectedKey = process.env.SEED_API_KEY || process.env.API_KEY
+
+  if (!expectedKey) return false
+  return apiKey === expectedKey
+}

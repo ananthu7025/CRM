@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { caseStudies } from '@/drizzle/schema'
 import { desc, eq } from 'drizzle-orm'
-import { getSession } from '@/lib/auth'
+import { getSession, checkApiKey } from '@/lib/auth'
 import { withCors } from '@/lib/cors'
 
 export async function GET(req: Request) {
@@ -26,7 +26,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const isAuth = await getSession()
-  if (!isAuth) {
+  const hasApiKey = checkApiKey(req)
+  if (!isAuth && !hasApiKey) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
