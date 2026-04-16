@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, Send, FileText, X, BookOpen, MessageSquare, Briefcase } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, Send, FileText, X, BookOpen, MessageSquare, Briefcase, Mail } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -20,6 +20,7 @@ const websiteItems = [
   { label: 'Blog Posts', href: '/blog-posts', icon: BookOpen },
   { label: 'Testimonials', href: '/testimonials', icon: MessageSquare },
   { label: 'Case Studies', href: '/case-studies', icon: Briefcase },
+  { label: 'Contact Form', href: '/contact-form', icon: Mail },
 ]
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

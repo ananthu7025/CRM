@@ -107,19 +107,8 @@ export default function ContactFormPage() {
         )}
 
         {showModal && selectedSubmission && (
-          <Modal onClose={handleCloseModal}>
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
-                <h2 className="text-xl font-bold text-gray-900">Contact Form Submission</h2>
-                <button
-                  onClick={handleCloseModal}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
+          <Modal title="Contact Form Submission" onClose={handleCloseModal}>
+            <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm text-gray-600 flex items-center gap-2 mb-2">
@@ -175,7 +164,6 @@ export default function ContactFormPage() {
                     Reply via Email
                   </a>
                 </div>
-              </div>
             </div>
           </Modal>
         )}
