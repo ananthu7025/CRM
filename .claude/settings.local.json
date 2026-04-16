@@ -3,7 +3,21 @@
     "allow": [
       "WebFetch(domain:ncamadeeasy.com)",
       "Bash(npx drizzle-kit push)",
-      "Bash(npx dotenv -e .env.local -- npx drizzle-kit push)"
+      "Bash(npx dotenv -e .env.local -- npx drizzle-kit push)",
+      "Bash(npm install groq-sdk)",
+      "Bash(npm run db:push)",
+      "Bash(npx dotenv-cli -e .env.local -- drizzle-kit push)",
+      "Bash(npx dotenv-cli -e .env.local -- npx drizzle-kit push)",
+      "Bash(curl -s http://localhost:3000/api/testimonials)",
+      "Bash(curl -s http://localhost:3000/api/case-studies)",
+      "Bash(curl -s http://localhost:3000/api/chatbot-config)",
+      "Bash(curl -s http://localhost:3000/blog-posts)",
+      "Bash(curl -s http://localhost:3000/testimonials)",
+      "Bash(curl -s http://localhost:3000/case-studies)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/blog-posts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/testimonials)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/case-studies)",
+      "Bash(curl -s -i http://localhost:3000/api/blog)"
     ]
   }
 }

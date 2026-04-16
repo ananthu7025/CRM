@@ -121,6 +121,48 @@ export const campaignSends = pgTable('campaign_sends', {
   sentAt: timestamp('sent_at'),
 })
 
+export const blogs = pgTable('blogs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: text('title').notNull(),
+  slug: text('slug').notNull().unique(),
+  publishDate: date('publish_date'),
+  thumbnail: text('thumbnail'),
+  tag: text('tag'),
+  author: text('author'),
+  authorImage: text('author_image'),
+  readTime: integer('read_time'),
+  description: text('description'),
+  content: text('content'),
+  published: boolean('published').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const testimonials = pgTable('testimonials', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  company: text('company'),
+  avatar: text('avatar'),
+  testimonial: text('testimonial').notNull(),
+  active: boolean('active').default(true).notNull(),
+  displayOrder: integer('display_order').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+export const caseStudies = pgTable('case_studies', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: text('title').notNull(),
+  slug: text('slug').notNull().unique(),
+  thumbnail: text('thumbnail'),
+  industry: text('industry'),
+  stack: text('stack'),
+  description: text('description'),
+  content: text('content'),
+  published: boolean('published').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
 export type Lead = typeof leads.$inferSelect
 export type NewLead = typeof leads.$inferInsert
 export type EmailTemplate = typeof emailTemplates.$inferSelect
@@ -137,3 +179,10 @@ export type Credential = typeof credentials.$inferSelect
 export type NewCredential = typeof credentials.$inferInsert
 export type User = typeof users.$inferSelect
 export type ProjectFile = typeof files.$inferSelect
+
+export type Blog = typeof blogs.$inferSelect
+export type NewBlog = typeof blogs.$inferInsert
+export type Testimonial = typeof testimonials.$inferSelect
+export type NewTestimonial = typeof testimonials.$inferInsert
+export type CaseStudy = typeof caseStudies.$inferSelect
+export type NewCaseStudy = typeof caseStudies.$inferInsert

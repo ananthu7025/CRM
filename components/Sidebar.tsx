@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, Send, FileText, X } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, CalendarDays, Bell, GitBranch, Users, Send, FileText, X, BookOpen, MessageSquare, Briefcase } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -14,6 +14,12 @@ const navItems = [
   { label: 'Meetings', href: '/meetings', icon: CalendarDays },
   { label: 'Reminders', href: '/reminders', icon: Bell },
   { label: 'Timeline', href: '/timeline', icon: GitBranch },
+]
+
+const websiteItems = [
+  { label: 'Blog Posts', href: '/blog-posts', icon: BookOpen },
+  { label: 'Testimonials', href: '/testimonials', icon: MessageSquare },
+  { label: 'Case Studies', href: '/case-studies', icon: Briefcase },
 ]
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -34,7 +40,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <X size={16} />
         </button>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map(({ label, href, icon: Icon }) => {
           const active =
             href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -54,6 +60,28 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
             </Link>
           )
         })}
+
+        <div className="my-4 pt-4 border-t border-[#E2E8F0]">
+          <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide px-3 mb-2">Website</p>
+          {websiteItems.map(({ label, href, icon: Icon }) => {
+            const active = pathname.startsWith(href)
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  active
+                    ? 'bg-[#FF5E8D]/10 text-[#FF5E8D]'
+                    : 'text-[#475569] hover:bg-[#F1F3F7] hover:text-[#0F172A]'
+                }`}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            )
+          })}
+        </div>
       </nav>
       <div className="px-6 py-4 border-t border-[#E2E8F0]">
         <p className="text-xs text-[#94A3B8]">v1.0.0 · Internal Tool</p>

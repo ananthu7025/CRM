@@ -3,7 +3,15 @@ import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
-const PUBLIC = ['/login', '/api/auth']
+const PUBLIC = [
+  '/login',
+  '/api/auth',
+  '/api/blog',
+  '/api/testimonials',
+  '/api/case-studies',
+  '/api/chatbot-config',
+  '/api/chatbot',
+]
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
