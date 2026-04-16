@@ -14,19 +14,21 @@ export async function POST(req: Request) {
 
     // Validation
     if (!name || !phone || !email || !subject || !message) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
       )
+      return withCors(res)
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { error: 'Invalid email address' },
         { status: 400 }
       )
+      return withCors(res)
     }
 
     // Store in database
@@ -87,10 +89,11 @@ export async function POST(req: Request) {
     return withCors(res)
   } catch (error) {
     console.error('Contact form error:', error)
-    return NextResponse.json(
+    const res = NextResponse.json(
       { error: 'Failed to process your request' },
       { status: 500 }
     )
+    return withCors(res)
   }
 }
 
@@ -100,4 +103,12 @@ export async function GET(req: Request) {
     methods: ['POST'],
   })
   return withCors(res)
+}
+
+export async function OPTIONS() {
+  const res = new NextResponse(null, { status: 204 })
+  res.headers.set('Access-Control-Allow-Origin', '*')
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+  return res
 }
