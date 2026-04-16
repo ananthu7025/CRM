@@ -88,9 +88,18 @@ export async function POST(req: Request) {
     )
     return withCors(res)
   } catch (error) {
-    console.error('Contact form error:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorStack = error instanceof Error ? error.stack : ''
+    console.error('Contact form error:', {
+      message: errorMessage,
+      stack: errorStack,
+      error: error,
+    })
     const res = NextResponse.json(
-      { error: 'Failed to process your request' },
+      {
+        error: 'Failed to process your request',
+        details: errorMessage,
+      },
       { status: 500 }
     )
     return withCors(res)
