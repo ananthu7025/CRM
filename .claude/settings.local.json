@@ -25,7 +25,12 @@
       "Bash(npm install next-cloudinary cloudinary)",
       "Bash(npx drizzle-kit generate)",
       "Bash(npx drizzle-kit migrate)",
-      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_LNmfbKx9GJ6E@ep-floral-dawn-amsmm7d1-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx drizzle-kit migrate)"
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_LNmfbKx9GJ6E@ep-floral-dawn-amsmm7d1-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" npx drizzle-kit migrate)",
+      "Bash(npm install dotenv-cli --save-dev)",
+      "Bash(npm run dev)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(test -f \"c:\\\\Users\\\\Anathapadmanabhan\\\\Desktop\\\\New folder\\\\CRM\\\\app\\\\invoices\\\\page.tsx\")",
+      "Bash(npm install html2pdf.js --save)"
     ]
   }
 }
