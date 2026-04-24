@@ -7,12 +7,12 @@ import { Plus, Trash2, Download, X, Eye } from 'lucide-react'
 interface LineItem {
   id: string
   description: string
-  quantity: number
   rate: number
 }
 
-const generateInvoiceNumber = () =>
-  `INV-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
+const INVOICE_PREFIX = `LL-${new Date().getFullYear()}-`
+
+const generateInvoiceNumber = () => '001'
 
 const getDefaultDueDate = () => {
   const d = new Date()
@@ -34,7 +34,7 @@ const invoiceStyles = {
     width: '794px',
     backgroundColor: '#ffffff',
     padding: '40px 48px',
-    fontFamily: 'Georgia, serif',
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     color: '#111827',
     boxSizing: 'border-box' as const,
   },
@@ -60,20 +60,25 @@ export default function InvoicesPage() {
 
   const [companyName, setCompanyName] = useState('Luminous Logics')
   const [companyEmail, setCompanyEmail] = useState('contact@luminouslogics.com')
-  const [companyPhone, setCompanyPhone] = useState('+91 484 000 0000')
-  const [companyAddress, setCompanyAddress] = useState('Kakkanad, Kochi, Kerala')
+  const [companyPhone, setCompanyPhone] = useState('+91 94478 48040')
+  const [companyAddress, setCompanyAddress] = useState('4/461, 2ND FLOOR, VALAMKOTTIL TOWERS, KAKKANAD, KOCHI, KERALA - 682021')
 
   const [lineItems, setLineItems] = useState<LineItem[]>([
-    { id: '1', description: '', quantity: 1, rate: 0 },
+    { id: '1', description: '', rate: 0 },
   ])
   const [taxPercent, setTaxPercent] = useState(0)
   const [paymentTerms, setPaymentTerms] = useState('')
   const [notes, setNotes] = useState('')
 
+  const [bankName, setBankName] = useState('')
+  const [accountNumber, setAccountNumber] = useState('')
+  const [ifscCode, setIfscCode] = useState('')
+  const [swiftCode, setSwiftCode] = useState('')
+
   const addLineItem = () =>
     setLineItems(prev => [
       ...prev,
-      { id: Math.random().toString(36).slice(2, 11), description: '', quantity: 1, rate: 0 },
+      { id: Math.random().toString(36).slice(2, 11), description: '', rate: 0 },
     ])
 
   const removeLineItem = (id: string) =>
@@ -84,7 +89,7 @@ export default function InvoicesPage() {
       prev.map(item => (item.id === id ? { ...item, [field]: value } : item))
     )
 
-  const subtotal = lineItems.reduce((sum, item) => sum + item.quantity * item.rate, 0)
+  const subtotal = lineItems.reduce((sum, item) => sum + item.rate, 0)
   const taxAmount = subtotal * (taxPercent / 100)
   const total = subtotal + taxAmount
 
@@ -173,14 +178,13 @@ export default function InvoicesPage() {
   const InvoiceLayout = () => (
     <>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '3px solid #111827', paddingBottom: '20px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '3px solid #111827', paddingBottom: '20px', marginBottom: '24px' }}>
         <div>
-          <div style={{ fontSize: '36px', fontWeight: '800', letterSpacing: '-1px', color: '#111827', fontFamily: 'Georgia, serif' }}>INVOICE</div>
-          <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px', fontFamily: 'sans-serif' }}>{companyName}</div>
+          <img src="/LuminousLogo.svg" alt="Luminous Logics Logo" style={{ height: '50px', width: 'auto' }} />
         </div>
-        <div style={{ border: '2px solid #111827', borderRadius: '6px', padding: '10px 16px', textAlign: 'right' }}>
-          <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: 'sans-serif' }}>Invoice #</div>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#111827', fontFamily: 'monospace' }}>{invoiceNumber}</div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px' }}>Invoice #</div>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: '#111827' }}>{INVOICE_PREFIX}{invoiceNumber}</div>
         </div>
       </div>
 
@@ -230,18 +234,14 @@ export default function InvoicesPage() {
         <thead>
           <tr style={{ background: '#111827', color: '#ffffff' }}>
             <th style={{ textAlign: 'left', padding: '8px 10px', fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px' }}>Description</th>
-            <th style={{ textAlign: 'center', padding: '8px 10px', fontSize: '11px', fontWeight: '700', width: '60px' }}>Qty</th>
-            <th style={{ textAlign: 'right', padding: '8px 10px', fontSize: '11px', fontWeight: '700', width: '100px' }}>Unit Price</th>
-            <th style={{ textAlign: 'right', padding: '8px 10px', fontSize: '11px', fontWeight: '700', width: '100px' }}>Total</th>
+            <th style={{ textAlign: 'right', padding: '8px 10px', fontSize: '11px', fontWeight: '700', width: '120px' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
           {lineItems.map((item, idx) => (
             <tr key={item.id} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
               <td style={{ padding: '8px 10px', fontSize: '12px', color: '#111827' }}>{item.description || 'Item'}</td>
-              <td style={{ padding: '8px 10px', fontSize: '12px', color: '#374151', textAlign: 'center' }}>{item.quantity}</td>
-              <td style={{ padding: '8px 10px', fontSize: '12px', color: '#374151', textAlign: 'right' }}>{formatCurrency(item.rate)}</td>
-              <td style={{ padding: '8px 10px', fontSize: '12px', fontWeight: '700', color: '#111827', textAlign: 'right' }}>{formatCurrency(item.quantity * item.rate)}</td>
+              <td style={{ padding: '8px 10px', fontSize: '12px', fontWeight: '700', color: '#111827', textAlign: 'right' }}>{formatCurrency(item.rate)}</td>
             </tr>
           ))}
         </tbody>
@@ -270,26 +270,53 @@ export default function InvoicesPage() {
       </div>
 
       {/* Footer */}
-      {(paymentTerms || notes) ? (
-        <div style={{ borderTop: '2px solid #111827', paddingTop: '16px', fontFamily: 'sans-serif' }}>
-          {paymentTerms && (
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Payment Terms</div>
-              <div style={{ fontSize: '12px', color: '#374151', whiteSpace: 'pre-wrap' }}>{paymentTerms}</div>
-            </div>
+      <div style={{ borderTop: '2px solid #111827', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', fontFamily: 'sans-serif' }}>
+        <div style={{ maxWidth: '60%' }}>
+          {(paymentTerms || notes) && (
+            <>
+              {paymentTerms && (
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Payment Terms</div>
+                  <div style={{ fontSize: '12px', color: '#374151', whiteSpace: 'pre-wrap' }}>{paymentTerms}</div>
+                </div>
+              )}
+              {notes && (
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Notes</div>
+                  <div style={{ fontSize: '12px', color: '#374151', whiteSpace: 'pre-wrap' }}>{notes}</div>
+                </div>
+              )}
+            </>
           )}
-          {notes && (
-            <div>
-              <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Notes</div>
-              <div style={{ fontSize: '12px', color: '#374151', whiteSpace: 'pre-wrap' }}>{notes}</div>
+
+          {/* Bank Details */}
+          <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+            <div style={{ fontSize: '10px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Bank Details</div>
+            <div style={{ fontSize: '11px', color: '#374151' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '4px' }}>
+                <span style={{ fontWeight: '600' }}>Bank Name:</span> <span>{bankName || '—'}</span>
+                <span style={{ fontWeight: '600' }}>Account No:</span> <span>{accountNumber || '—'}</span>
+                <span style={{ fontWeight: '600' }}>IFSC Code:</span> <span>{ifscCode || '—'}</span>
+                <span style={{ fontWeight: '600' }}>SWIFT Code:</span> <span>{swiftCode || '—'}</span>
+              </div>
             </div>
-          )}
+          </div>
         </div>
-      ) : (
-        <div style={{ borderTop: '2px solid #111827', paddingTop: '12px', textAlign: 'center', fontFamily: 'sans-serif' }}>
-          <span style={{ fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>Thank you for your business!</span>
+
+        <div style={{ textAlign: 'right', minWidth: '180px' }}>
+          <div style={{ position: 'relative', marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
+            {/* Stamp / Seal Placeholder */}
+            <div style={{ position: 'absolute', top: '-40px', right: '0', opacity: 0.7 }}>
+              <img src="/seal.png" alt="Company Seal" style={{ width: '90px', height: '90px' }} />
+            </div>
+          </div>
+          <div style={{ borderTop: '1px solid #111827', paddingTop: '10px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#111827', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Authorized Signatory</div>
+            <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>{companyName}</div>
+          </div>
         </div>
-      )}
+      </div>
+
     </>
   )
 
@@ -344,12 +371,16 @@ export default function InvoicesPage() {
             <div className="grid grid-cols-3 gap-5 mb-5">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Invoice Number</label>
-                <input
-                  type="text"
-                  value={invoiceNumber}
-                  onChange={e => setInvoiceNumber(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="flex items-center">
+                  <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l text-gray-600 font-mono text-sm leading-tight h-[38px] flex items-center">{INVOICE_PREFIX}</span>
+                  <input
+                    type="text"
+                    value={invoiceNumber}
+                    onChange={e => setInvoiceNumber(e.target.value)}
+                    placeholder="001"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-r text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 h-[38px]"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Invoice Date</label>
@@ -435,6 +466,53 @@ export default function InvoicesPage() {
             </div>
           </div>
 
+          {/* Bank Details */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 mb-5">Bank Details</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
+                <input
+                  type="text"
+                  value={bankName}
+                  onChange={e => setBankName(e.target.value)}
+                  placeholder="e.g., HDFC Bank"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
+                <input
+                  type="text"
+                  value={accountNumber}
+                  onChange={e => setAccountNumber(e.target.value)}
+                  placeholder="e.g., 501000..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">IFSC Code</label>
+                <input
+                  type="text"
+                  value={ifscCode}
+                  onChange={e => setIfscCode(e.target.value)}
+                  placeholder="e.g., HDFC0000001"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">SWIFT / BIC Code</label>
+                <input
+                  type="text"
+                  value={swiftCode}
+                  onChange={e => setSwiftCode(e.target.value)}
+                  placeholder="Optional"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Line Items */}
           <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-5">
@@ -459,33 +537,16 @@ export default function InvoicesPage() {
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="w-20">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Qty</label>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={e => updateLineItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
-                      min="0"
-                      step="0.5"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="w-28">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Unit Price</label>
+                  <div className="w-32">
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Amount</label>
                     <input
                       type="number"
                       value={item.rate}
                       onChange={e => updateLineItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
                       min="0"
                       step="0.01"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
                     />
-                  </div>
-                  <div className="w-24">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Total</label>
-                    <div className="px-3 py-2 text-sm font-bold text-gray-900 bg-white border border-gray-300 rounded">
-                      {formatCurrency(item.quantity * item.rate)}
-                    </div>
                   </div>
                   <button
                     onClick={() => removeLineItem(item.id)}
@@ -533,6 +594,7 @@ export default function InvoicesPage() {
                 />
               </div>
             </div>
+
             <div className="mt-5">
               <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Notes</label>
               <textarea
